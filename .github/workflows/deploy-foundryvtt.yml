@@ -25,8 +25,17 @@ jobs:
       with:
         failOnStdErr: false
         parameters: >
+          containerAppConfiguration=${{ vars.CONTAINER_APP_CONFIGURATION }}
+          containerAppName=${{ vars.CONTAINER_APP_NAME }}
+          containerAppsEnvironmentName=${{ vars.CONTAINER_APPS_ENVIRONMENT_NAME }}
+          foundryAdminKey=${{ secrets.FOUNDRY_ADMIN_KEY }}
+          foundryMajorVersion=${{ vars.FOUNDRY_MAJOR_VERSION }}
+          foundryPassword=${{ secrets.FOUNDRY_PASSWORD }}
+          foundryUserName=${{ secrets.FOUNDRY_USERNAME }}
           location=${{ vars.LOCATION }}
           resourceGroupName=${{ vars.RESOURCE_GROUP_NAME }}
+          storageAccountConfiguration=${{ vars.STORAGE_ACCOUNT_CONFIGURATION }}
+          storageAccountName=${{ vars.STORAGE_ACCOUNT_NAME }}
         region: ${{ vars.LOCATION }}
         scope: subscription
         template: ./eng/deployment/main.bicep
