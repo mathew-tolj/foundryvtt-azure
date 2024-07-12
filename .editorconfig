@@ -1,0 +1,21 @@
+# editorconfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Default settings:
+# A newline ending every file
+# Use 4 spaces as indentation
+[*]
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Bicep files
+[*.bicep]
+indent_size = 2
+
+# YAML config files
+[*.{yml,yaml}]
+indent_size = 2
