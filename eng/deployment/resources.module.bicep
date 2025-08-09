@@ -11,7 +11,7 @@ param containerAppsEnvironmentName string
 @secure()
 param foundryAdminKey string
 
-param foundryMajorVersion int = 12
+param foundryMajorVersion int = 13
 
 @secure()
 param foundryPassword string
@@ -41,25 +41,25 @@ var containerAppConfigurationMap = {
 }
 
 var storageAccountConfigurationMap = {
-  standard: {
-    kind: 'StorageV2'
-    sku: 'Standard_LRS'
-  }
   premium: {
     kind: 'FileStorage'
     sku: 'Premium_LRS'
   }
+  standard: {
+    kind: 'StorageV2'
+    sku: 'Standard_LRS'
+  }
 }
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
-  name: storageAccountName
-  location: location
-  sku: {
-    name: storageAccountConfigurationMap[storageAccountConfiguration].sku
-  }
+resource storageAccount 'Microsoft.Storage/storageAccounts@2025-01-01' = {
   kind: storageAccountConfigurationMap[storageAccountConfiguration].kind
+  location: location
+  name: storageAccountName
   properties: {
     minimumTlsVersion: 'TLS1_2'
+  }
+  sku: {
+    name: storageAccountConfigurationMap[storageAccountConfiguration].sku
   }
   resource fileService 'fileServices' = {
     name: 'default'
@@ -73,9 +73,9 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 
-resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' = {
-  name: containerAppsEnvironmentName
+resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2025-01-01' = {
   location: location
+  name: containerAppsEnvironmentName
   properties: {}
   resource storage 'storages' = {
     name: 'foundryvtt-v${foundryMajorVersion}-data'
@@ -90,9 +90,9 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01'
   }
 }
 
-resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
-  name: containerAppName
+resource containerApp 'Microsoft.App/containerApps@2025-01-01' = {
   location: location
+  name: containerAppName
   properties: {
     configuration: {
       ingress: {
@@ -128,10 +128,6 @@ resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
               value: 'true'
             }
             {
-              name: 'FOUNDRY_GID'
-              value: 'root'
-            }
-            {
               name: 'FOUNDRY_MINIFY_STATIC_FILES'
               value: 'true'
             }
@@ -142,10 +138,6 @@ resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
             {
               name: 'FOUNDRY_TELEMETRY'
               value: 'false'
-            }
-            {
-              name: 'FOUNDRY_UID'
-              value: 'root'
             }
             {
               name: 'FOUNDRY_USERNAME'
@@ -172,8 +164,9 @@ resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
       }
       volumes: [
         {
+          mountOptions: 'gid=1000,uid=1000'
           name: 'foundryvtt-data'
-          storageName: 'foundryvtt-v${foundryMajorVersion}-data'
+          storageName: containerAppsEnvironment::storage.name
           storageType: 'AzureFile'
         }
       ]

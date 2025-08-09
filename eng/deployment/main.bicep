@@ -13,7 +13,7 @@ param containerAppsEnvironmentName string
 @secure()
 param foundryAdminKey string
 
-param foundryMajorVersion int = 12
+param foundryMajorVersion int = 13
 
 @secure()
 param foundryPassword string
@@ -33,14 +33,13 @@ param storageAccountConfiguration string = 'standard'
 
 param storageAccountName string
 
-resource resourceGroup 'Microsoft.Resources/resourceGroups@2024-03-01' = {
-  name: resourceGroupName
+resource resourceGroup 'Microsoft.Resources/resourceGroups@2025-04-01' = {
   location: location
+  name: resourceGroupName
 }
 
 module resources './resources.module.bicep' = {
   name: 'resourcesModule'
-  scope: resourceGroup
   params: {
     containerAppConfiguration: containerAppConfiguration
     containerAppName: containerAppName
@@ -53,4 +52,5 @@ module resources './resources.module.bicep' = {
     storageAccountConfiguration: storageAccountConfiguration
     storageAccountName: storageAccountName
   }
+  scope: resourceGroup
 }
